@@ -1,5 +1,5 @@
 ## Download Tumblr Images
-###### Ravi S. Rāmphal // 2013.04.07
+###### Ravi S. Rāmphal // 2013.04.07 // Refactored 2014.05.18
 
 ***
 

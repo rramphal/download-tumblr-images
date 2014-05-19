@@ -54,9 +54,9 @@ end
 
 def sanitize_tumblr_urls(urls)
   urls = urls.reject do |url|
-    not url.include?("tumblr") ||
-        url.include?("avatar") ||
-        url.include?("assets")
+    !url.include?("tumblr") ||
+     url.include?("avatar") ||
+     url.include?("assets")
   end
 
   return urls
@@ -71,6 +71,7 @@ urls = concat_lines_from_files(files)
 urls = sanitize_tumblr_urls(urls)
 
 urls.each_with_index do |url, index|
+  number =
   puts "#{index + 1}: #{url}"
   download_tumblr_image(url)
 end
