@@ -34,23 +34,41 @@ def download_tumblr_image(url)
   end
 end
 
-# ================ MAIN ================
+def concat_lines_from_files(files)
+  lines = Array.new
 
-files = ARGV.empty? ? [DEFAULT_FILE] : ARGV
+  files.each do |file|
+    if File.file?(file)
+      puts "=== CONCATENATING #{file} ==="
+
+      File.foreach(file) do |line|
+        lines << line
+      end
+    else
+      puts "=== #{file} IS INVALID ==="
+    end
+  end
+
+  return lines
+end
+
+def sanitize_tumblr_urls(urls)
+  urls = urls.reject do |url|
+    not url.include?("tumblr") ||
+        url.include?("avatar") ||
+        url.include?("assets")
+  end
+
+  return urls
+end
+
+# ================ MAIN ================
 
 Dir::mkdir(IMAGE_FOLDER_NAME) unless File.exists?(IMAGE_FOLDER_NAME)
 
-urls = Array.new
-
-files.each do |file|
-  if File.file?(file)
-    puts "=== LOADING: #{file} ==="
-
-    File.foreach(file) do |line|
-      urls << line
-    end
-  end
-end
+files = ARGV.empty? ? [DEFAULT_FILE] : ARGV
+urls = concat_lines_from_files(files)
+urls = sanitize_tumblr_urls(urls)
 
 urls.each_with_index do |url, index|
   puts "#{index + 1}: #{url}"

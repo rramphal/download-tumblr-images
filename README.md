@@ -1,18 +1,22 @@
 ## Download Tumblr Images
 ###### Ravi S. Rāmphal // 2013.04.07
 
+***
+
+### REFLECTION
+
+While the code is split out into readable units (functions with single responsibilities), they are coupled with constants. I am not sure what best practice is in this case.
+
+***
+
 ### # vs .
 
-These are naming conventions in Ruby.
+These are naming conventions in Ruby in documentation.
 
 `#` refers to class methods  
 `.` refers to instance methods
-`::` refers to class methods
 
-For example:
-
-File#file?
-array.each
+For example: `File#file?` -- or -- `array.each`
 
 ### ARGV vs. ARGF
 
@@ -23,7 +27,9 @@ I use `ARGV` here, but I could have adapted this to use `ARGF`. `ARGF` reads in 
 ### Testing ARGV
 
 ```ruby
-files = ARGV.empty? ? [DEFAULT_FILE] : ARGV
+files =           ARGV.empty? ? [DEFAULT_FILE] : ARGV
+# refactored for single responsibility
+files = array_of_files.empty? ? [DEFAULT_FILE] : array_of_files
 ```
 
 With this ternary expression, I test `ARGV` and conditionally store it. If `ARGV` is empty (i.e., if no parameters were passed to the script), then set files equal to the default file name defined as a constant above wrapped in an array. Else, set files equal to the list of parameters passed in. Note that files will always be an array.
@@ -79,6 +85,8 @@ end
 p data #=> NameError: undefined local variable or method `data' for main:Object
 p item #=> NameError: undefined local variable or method `item' for main:Object
 ```
+
+***
 
 ### Old Python code
 
