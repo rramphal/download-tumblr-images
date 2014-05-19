@@ -1,42 +1,52 @@
-# =========== LIBRARIES ===========
+# ================ LIBRARIES ================
 
 require 'httparty'
 
-# =========== CONSTANTS ===========
+# ================ CONSTANTS ================
 
 DEFAULT_FILE       = "url.txt"
 IMG_SIZES          = ["1280","500","400","250"]
-TUMBLR_IMG_PATTERN = "(.*)_(.*)\.(.*)"
+TUMBLR_IMG_PATTERN = /\A(?<base>.*)\/(?<stem>.*)_(?<size>.*)\.(?<extension>.*)\Z/
+IMAGE_FOLDER_NAME  = "tumblr"
 
-# =========== FUNCTIONS ===========
+# ================ FUNCTIONS ================
 
-def dl_tumblr_img(url)
-  response = HTTParty.get('https://api.stackexchange.com/2.2/questions?site=stackoverflow')
+def download_tumblr_image(url)
+  url = TUMBLR_IMG_PATTERN.match(url)
+
+  url_base = url[:base]
+  url_stem = url[:stem]
+  url_ext  = url[:extension]
+
+  IMG_SIZES.each do |size|
+    query_filename = url_stem + "_" + size + "." + url_ext
+    query_url = url_base + "/" + query_filename
+
+    response = HTTParty.get(query_url)
+
+    if response.headers["content-type"].include?("image")
+      File.open(IMAGE_FOLDER_NAME + "/" + query_filename, "wb") do |f|
+        f.write(response.body)
+      end
+
+      break
+    end
+  end
 end
 
-  # url = re.search(tumblr_img_pattern, url)
-
-  # urlstem = url.group(1)
-  # urlext = url.group(3)
-
-  # for size in img_sizes:
-  #   cmd = subprocess.Popen(wgetfile + " " + urlstem + "_" + size + "." + urlext, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-  #   stop = True
-  #   for line in cmd.stdout:
-  #     if "403" in line.decode("utf-8"):
-  #       stop = False
-  #   if stop:
-  #     return
-
-# =========== MAIN ===========
+# ================ MAIN ================
 
 files = ARGV.empty? ? [DEFAULT_FILE] : ARGV
 
+Dir::mkdir(IMAGE_FOLDER_NAME) unless File.exists?(IMAGE_FOLDER_NAME)
+
 files.each do |file|
   if File.file?(file)
+    puts "=== PROCESSING: #{file} ==="
+
     File.foreach(file).with_index do |url, url_number|
       puts "#{url_number}: #{url}"
-      download_tumblr_img(url)
+      download_tumblr_image(url)
     end
   end
 end
