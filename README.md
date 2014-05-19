@@ -3,13 +3,35 @@
 
 ***
 
-### REFLECTION
+### Description
+
+This is a ruby script that allows you to download that highest resolution versions of a list of Tumblr images. You can feed one or more lists of Tumblr image URLs in plain text format with each URL on its own line. It will ignore avatars, and Tumblr assets (images used for Tumblr UX and not actually content).
+
+The default case expects that you have put the urls in a file called `url.txt`. You simply call the script with:
+
+```bash
+ruby download_tumblr_urls.rb
+```
+
+However, if you would like to provide a different file(s), you can specify it/them like this:
+
+```bash
+ruby download_tumblr_urls.rb list1.txt list2.txt
+```
+
+It will download into a folder in the same directory as the script file called "tumblr," but you can change this by opening up the script and changing the `IMAGE_FOLDER_NAME` constant. You can also change the default filename by changing the `DEFAULT_FILE` constant.
+
+***
+
+### Reflection
 
 While the code is split out into readable units (functions with single responsibilities), they are coupled with constants. I am not sure what best practice is in this case.
 
 ***
 
-### # vs .
+### Notes
+
+#### # vs .
 
 These are naming conventions in Ruby in documentation.
 
@@ -18,13 +40,13 @@ These are naming conventions in Ruby in documentation.
 
 For example: `File#file?` -- or -- `array.each`
 
-### ARGV vs. ARGF
+#### ARGV vs. ARGF
 
 I use `ARGV` here, but I could have adapted this to use `ARGF`. `ARGF` reads in the contents of files passed into a stream that you can iterate through. However, it would have been more difficult to set a default file to read in.
 
 <http://robm.me.uk/ruby/2013/12/03/argf-ruby.html>
 
-### Testing ARGV
+#### Testing ARGV
 
 ```ruby
 files =           ARGV.empty? ? [DEFAULT_FILE] : ARGV
@@ -34,7 +56,7 @@ files = array_of_files.empty? ? [DEFAULT_FILE] : array_of_files
 
 With this ternary expression, I test `ARGV` and conditionally store it. If `ARGV` is empty (i.e., if no parameters were passed to the script), then set files equal to the default file name defined as a constant above wrapped in an array. Else, set files equal to the list of parameters passed in. Note that files will always be an array.
 
-### Testing the existence of a file (and file? vs. exist?)
+#### Testing the existence of a file (and file? vs. exist?)
 
 ```ruby
 if File.file?(file)
@@ -52,7 +74,7 @@ Dir::mkdir(IMAGE_FOLDER_NAME) unless File.exists?(IMAGE_FOLDER_NAME)
 
 <http://www.gethourglass.com/blog/ruby-check-if-file-exists.html>
 
-### for loops vs. .each loops
+#### for loops vs. .each loops
 
 I normally use `for item in items` which I thought was identical to `items.each do |item|`. However, I found out that there is a subtle difference in variable scoping.
 
