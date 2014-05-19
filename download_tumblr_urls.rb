@@ -40,13 +40,19 @@ files = ARGV.empty? ? [DEFAULT_FILE] : ARGV
 
 Dir::mkdir(IMAGE_FOLDER_NAME) unless File.exists?(IMAGE_FOLDER_NAME)
 
+urls = Array.new
+
 files.each do |file|
   if File.file?(file)
-    puts "=== PROCESSING: #{file} ==="
+    puts "=== LOADING: #{file} ==="
 
-    File.foreach(file).with_index do |url, url_number|
-      puts "#{url_number}: #{url}"
-      download_tumblr_image(url)
+    File.foreach(file) do |line|
+      urls << line
     end
   end
+end
+
+urls.each_with_index do |url, index|
+  puts "#{index + 1}: #{url}"
+  download_tumblr_image(url)
 end
