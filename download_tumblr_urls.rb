@@ -1,13 +1,15 @@
 # ================ LIBRARIES ================
 
 require 'httparty'
+require 'uri'
 
 # ================ CONSTANTS ================
 
-DEFAULT_FILE       = "url.txt"
+DEFAULT_URLS_LIST  = "url.txt"
+IMAGE_FOLDER_NAME  = "tumblr"
+
 IMG_SIZES          = ["1280","500","400","250"]
 TUMBLR_IMG_PATTERN = /\A(?<base>.*)\/(?<stem>.*)_(?<size>.*)\.(?<extension>.*)\Z/
-IMAGE_FOLDER_NAME  = "tumblr"
 
 # ================ FUNCTIONS ================
 
@@ -42,7 +44,7 @@ def concat_lines_from_files(files)
       puts "=== CONCATENATING #{file} ==="
 
       File.foreach(file) do |line|
-        lines << line
+        lines << line.chomp
       end
     else
       puts "=== #{file} IS INVALID ==="
@@ -54,24 +56,27 @@ end
 
 def sanitize_tumblr_urls(urls)
   urls = urls.reject do |url|
-    !url.include?("tumblr") ||
-     url.include?("avatar") ||
-     url.include?("assets")
+    url !~ /\A#{URI::regexp}\z/ || # invalid urls (including blank lines)
+    !url.include?("tumblr")     || # non-tumblr links
+    url.include?("avatar")      || # tumblr avatars
+    url.include?("assets")         # tumblr assets
   end
 
-  return urls
+  return urls.uniq
 end
 
 # ================ MAIN ================
 
 Dir::mkdir(IMAGE_FOLDER_NAME) unless File.exists?(IMAGE_FOLDER_NAME)
 
-files = ARGV.empty? ? [DEFAULT_FILE] : ARGV
+files = ARGV.empty? ? [DEFAULT_URLS_LIST] : ARGV
 urls = concat_lines_from_files(files)
 urls = sanitize_tumblr_urls(urls)
 
+count = urls.count
+degree = count.to_s.length
+
 urls.each_with_index do |url, index|
-  number =
-  puts "#{index + 1}: #{url}"
+  puts "#{(index + 1).to_s.rjust(degree, "0")} of #{count}: #{url}"
   download_tumblr_image(url)
 end

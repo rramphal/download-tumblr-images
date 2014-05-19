@@ -19,7 +19,7 @@ However, if you would like to provide a different file(s), you can specify it/th
 ruby download_tumblr_urls.rb list1.txt list2.txt
 ```
 
-It will download into a folder in the same directory as the script file called "tumblr," but you can change this by opening up the script and changing the `IMAGE_FOLDER_NAME` constant. You can also change the default filename by changing the `DEFAULT_FILE` constant.
+It will download into a folder in the same directory as the script file called "tumblr," but you can change this by opening up the script and changing the `IMAGE_FOLDER_NAME` constant. You can also change the default filename by changing the `DEFAULT_URLS_LIST` constant.
 
 ***
 
